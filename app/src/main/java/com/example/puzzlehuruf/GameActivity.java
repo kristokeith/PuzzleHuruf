@@ -1,9 +1,10 @@
 package com.example.puzzlehuruf;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
-import android.content.Intent;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -21,7 +22,7 @@ public class GameActivity extends AppCompatActivity {
     private int emptyY=3;
     private RelativeLayout group;
     private Button[][] buttons;
-    private int[] tiles;
+    private char[] tiles;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,9 +51,9 @@ public class GameActivity extends AppCompatActivity {
         int n=15;
         Random random= new Random();
         while (n>1){
-            int randomAlp = random.nextInt(n--);
-            char temp = tiles[randomAlp];
-            tiles[randomAlp]=tiles[n];
+            int randomNum = random.nextInt(n--);
+            char temp = tiles[randomNum];
+            tiles[randomNum]=tiles[n];
             tiles[n] = temp;
         }
         if(!isSolvable())
@@ -103,11 +104,13 @@ public class GameActivity extends AppCompatActivity {
 
     private void checkWin(){
         boolean isWin = false;
+        char x;
         if(emptyX==3&&emptyY==3){
             for (int i=0; i < group.getChildCount() - 1; i++) {
-                if (buttons[i / 4][i % 4].getText().toString().equals(String.valueOf(i + 1))){
+                x = (char) ('A' + i);
+                if (buttons[i/4][i%4].getText().toString().equals(String.valueOf(x))) {
                     isWin=true;
-                }else{
+                } else {
                     isWin=false;
                     break;
                 }
@@ -130,10 +133,32 @@ public class GameActivity extends AppCompatActivity {
     }
 
     public boolean onOptionsItemSelected(MenuItem item){
-        if(item.getItemId()==R.id.restart){
-            startActivity(new Intent(this, GameActivity.class));
-        }else if(item.getItemId()==R.id.exit){
-            startActivity(new Intent(this, MainActivity.class));
+        switch (item.getItemId()){
+            case R.id.exit:
+                final AlertDialog.Builder builder = new AlertDialog.Builder(GameActivity.this);
+                builder.setIcon(R.drawable.ic_baseline_exit_to_app_24);
+                builder.setTitle("Confirm Exit");
+                builder.setMessage("Do you want to exit?");
+                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        finish();
+                    }
+                });
+                builder.setNegativeButton("Cancel", null);
+                final AlertDialog alertDialog = builder.create();
+                alertDialog.show();
+                break;
+            case R.id.restart:
+                if (item.getItemId() == R.id.restart){
+                    loadViews();
+                    loadAlphabet();
+                    generateAlphabet();
+                    loadDataToViews();
+                }else {
+                    finish();
+                }
+                return super.onOptionsItemSelected(item);
         }
         return true;
     }
