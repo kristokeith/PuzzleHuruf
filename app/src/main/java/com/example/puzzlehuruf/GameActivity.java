@@ -50,9 +50,9 @@ public class GameActivity extends AppCompatActivity {
         int n=15;
         Random random= new Random();
         while (n>1){
-            int randomNum = random.nextInt(n--);
-            int temp = tiles[randomNum];
-            tiles[randomNum]=tiles[n];
+            int randomAlp = random.nextInt(n--);
+            char temp = tiles[randomAlp];
+            tiles[randomAlp]=tiles[n];
             tiles[n] = temp;
         }
         if(!isSolvable())
@@ -70,9 +70,9 @@ public class GameActivity extends AppCompatActivity {
         return countInversions%2 == 0;
     }
     private void loadAlphabet(){
-        tiles = new int[16];
+        tiles = new char[16];
         for(int i=0; i < group.getChildCount() - 1; i++){
-            tiles[i] = i+1;
+            tiles[i] = (char) +('A'+i);
         }
     }
 
